@@ -1,0 +1,34 @@
+# Composer
+/vendor/
+composer.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated files
+internal/generated/
+
+# Test results
+/coverage/
+.phpunit.result.cache
+
+# Build artifacts
+/build/
+/dist/
+
+# Logs
+*.log
+
+# Cache
+.cache/
+
+# Temporary files
+*.tmp
+*.temp
