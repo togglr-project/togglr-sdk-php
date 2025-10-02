@@ -144,6 +144,108 @@ $isEnabled = $client->isEnabled('feature_key', $context);
 $isEnabled = $client->isEnabledOrDefault('feature_key', $context, false);
 ```
 
+## Error Reporting and Auto-Disable
+
+The SDK supports reporting errors for features, which can trigger automatic disabling based on error rates:
+
+```php
+// Report an error for a feature
+[$health, $isPending] = $client->reportError(
+    'feature_key',
+    'timeout',
+    'Service did not respond in 5s',
+    ['service' => 'payment-gateway', 'timeout_ms' => 5000]
+);
+
+echo "Error reported: pending=" . ($isPending ? 'true' : 'false') . "\n";
+echo "Feature health: enabled=" . ($health->isEnabled() ? 'true' : 'false') . 
+     ", auto_disabled=" . ($health->isAutoDisabled() ? 'true' : 'false') . "\n";
+```
+
+### Error Types
+
+Supported error types:
+- `timeout` - Service timeout
+- `validation` - Data validation error
+- `service_unavailable` - External service unavailable
+- `rate_limit` - Rate limit exceeded
+- `network` - Network connectivity issue
+- `internal` - Internal application error
+
+### Context Data
+
+You can provide additional context with error reports:
+
+```php
+$context = [
+    'service' => 'payment-gateway',
+    'timeout_ms' => 5000,
+    'user_id' => 'user123',
+    'region' => 'us-east-1'
+];
+
+[$health, $isPending] = $client->reportError(
+    'feature_key',
+    'timeout',
+    'Service timeout',
+    $context
+);
+```
+
+## Feature Health Monitoring
+
+Monitor the health status of features:
+
+```php
+// Get detailed health information
+$health = $client->getFeatureHealth('feature_key');
+
+echo "Feature: {$health->getFeatureKey()}\n";
+echo "Enabled: " . ($health->isEnabled() ? 'true' : 'false') . "\n";
+echo "Auto Disabled: " . ($health->isAutoDisabled() ? 'true' : 'false') . "\n";
+echo "Error Rate: {$health->getErrorRate()}\n";
+echo "Threshold: {$health->getThreshold()}\n";
+echo "Last Error At: {$health->getLastErrorAt()}\n";
+
+// Simple health check
+$isHealthy = $client->isFeatureHealthy('feature_key');
+echo "Feature is healthy: " . ($isHealthy ? 'true' : 'false') . "\n";
+```
+
+### FeatureHealth Model
+
+The `Togglr\Sdk\Models\FeatureHealth` class provides:
+
+- `getFeatureKey()` - The feature identifier
+- `getEnvironmentKey()` - The environment identifier
+- `isEnabled()` - Whether the feature is enabled
+- `isAutoDisabled()` - Whether the feature was auto-disabled due to errors
+- `getErrorRate()` - Current error rate (0.0 to 1.0)
+- `getThreshold()` - Error rate threshold for auto-disable
+- `getLastErrorAt()` - Timestamp of the last error
+- `isHealthy()` - Boolean method to check if feature is healthy
+
+### ErrorReport Model
+
+The `Togglr\Sdk\Models\ErrorReport` class provides:
+
+- `getErrorType()` - Type of error
+- `getErrorMessage()` - Human-readable error message
+- `getContext()` - Additional context data
+- `toArray()` - Convert to array for API requests
+
+```php
+// Create an error report
+$errorReport = ErrorReport::new(
+    'timeout',
+    'Service timeout',
+    ['service' => 'api', 'timeout_ms' => 5000]
+);
+
+// Convert to array for API requests
+$errorData = $errorReport->toArray();
+```
+
 ### Health check
 
 ```php

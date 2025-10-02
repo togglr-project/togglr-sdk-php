@@ -69,6 +69,39 @@ function main(): void
         } else {
             echo "API is not healthy\n";
         }
+
+        // Report an error for a feature
+        try {
+            [$health, $isPending] = $client->reportError(
+                'new_ui',
+                'timeout',
+                'Service did not respond in 5s',
+                ['service' => 'payment-gateway', 'timeout_ms' => 5000]
+            );
+            echo "Error reported for new_ui: pending=" . ($isPending ? 'true' : 'false') . "\n";
+            echo "Feature health: enabled=" . ($health->isEnabled() ? 'true' : 'false') . 
+                 ", auto_disabled=" . ($health->isAutoDisabled() ? 'true' : 'false') . "\n";
+        } catch (TogglrException $e) {
+            echo "Failed to report error: {$e->getMessage()}\n";
+        }
+
+        // Get feature health
+        try {
+            $health = $client->getFeatureHealth('new_ui');
+            echo "Feature health: enabled=" . ($health->isEnabled() ? 'true' : 'false') . 
+                 ", auto_disabled=" . ($health->isAutoDisabled() ? 'true' : 'false') . "\n";
+            echo "Error rate: {$health->getErrorRate()}, threshold: {$health->getThreshold()}\n";
+        } catch (TogglrException $e) {
+            echo "Failed to get feature health: {$e->getMessage()}\n";
+        }
+
+        // Simple health check
+        try {
+            $isHealthy = $client->isFeatureHealthy('new_ui');
+            echo "Feature new_ui is healthy: " . ($isHealthy ? 'true' : 'false') . "\n";
+        } catch (TogglrException $e) {
+            echo "Failed to check feature health: {$e->getMessage()}\n";
+        }
     } finally {
         $client->close();
     }

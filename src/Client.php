@@ -268,4 +268,188 @@ class Client
             $this->logger->info($message, $context);
         }
     }
+
+    /**
+     * Report an error for a feature.
+     *
+     * @return array{0: FeatureHealth, 1: bool} Returns [health, is_pending]
+     * @throws TogglrException
+     */
+    public function reportError(string $featureKey, string $errorType, string $errorMessage, array $context = []): array
+    {
+        return $this->reportErrorWithRetries($featureKey, $errorType, $errorMessage, $context);
+    }
+
+    /**
+     * Get feature health information.
+     *
+     * @throws TogglrException
+     */
+    public function getFeatureHealth(string $featureKey): Models\FeatureHealth
+    {
+        return $this->getFeatureHealthWithRetries($featureKey);
+    }
+
+    /**
+     * Check if a feature is healthy.
+     *
+     * @throws TogglrException
+     */
+    public function isFeatureHealthy(string $featureKey): bool
+    {
+        $health = $this->getFeatureHealth($featureKey);
+        return $health->isHealthy();
+    }
+
+    /**
+     * Report error with retry logic.
+     *
+     * @return array{0: FeatureHealth, 1: bool} Returns [health, is_pending]
+     * @throws TogglrException
+     */
+    private function reportErrorWithRetries(string $featureKey, string $errorType, string $errorMessage, array $context): array
+    {
+        $errorReport = Models\ErrorReport::new($errorType, $errorMessage, $context);
+        
+        $attempt = 0;
+        $maxAttempts = $this->config->getRetries() + 1;
+
+        while ($attempt < $maxAttempts) {
+            try {
+                return $this->reportErrorSingle($featureKey, $errorReport);
+            } catch (TogglrException $e) {
+                $attempt++;
+                
+                if ($attempt >= $maxAttempts || !$this->shouldRetry($e)) {
+                    throw $e;
+                }
+
+                $delay = $this->config->getBackoff()->calculateDelay($attempt);
+                usleep((int) ($delay * 1000000)); // Convert to microseconds
+            }
+        }
+
+        throw new TogglrException('Max retry attempts exceeded');
+    }
+
+    /**
+     * Report error single attempt.
+     *
+     * @return array{0: FeatureHealth, 1: bool} Returns [health, is_pending]
+     * @throws TogglrException
+     */
+    private function reportErrorSingle(string $featureKey, Models\ErrorReport $errorReport): array
+    {
+        $url = "/sdk/v1/features/{$featureKey}/report-error";
+        $body = json_encode($errorReport->toArray());
+
+        try {
+            $response = $this->httpClient->post($url, [
+                'body' => $body,
+            ]);
+
+            $statusCode = $response->getStatusCode();
+            $responseData = json_decode($response->getBody()->getContents(), true);
+
+            if ($statusCode === 200) {
+                $health = Models\FeatureHealth::fromArray($responseData);
+                return [$health, false]; // health, is_pending
+            } elseif ($statusCode === 202) {
+                $health = Models\FeatureHealth::fromArray($responseData);
+                return [$health, true]; // health, is_pending
+            } else {
+                throw new TogglrException("Unexpected status code: {$statusCode}");
+            }
+        } catch (RequestException $e) {
+            $this->handleHttpError($e, $featureKey);
+        }
+    }
+
+    /**
+     * Get feature health with retry logic.
+     *
+     * @throws TogglrException
+     */
+    private function getFeatureHealthWithRetries(string $featureKey): Models\FeatureHealth
+    {
+        $attempt = 0;
+        $maxAttempts = $this->config->getRetries() + 1;
+
+        while ($attempt < $maxAttempts) {
+            try {
+                return $this->getFeatureHealthSingle($featureKey);
+            } catch (TogglrException $e) {
+                $attempt++;
+                
+                if ($attempt >= $maxAttempts || !$this->shouldRetry($e)) {
+                    throw $e;
+                }
+
+                $delay = $this->config->getBackoff()->calculateDelay($attempt);
+                usleep((int) ($delay * 1000000)); // Convert to microseconds
+            }
+        }
+
+        throw new TogglrException('Max retry attempts exceeded');
+    }
+
+    /**
+     * Get feature health single attempt.
+     *
+     * @throws TogglrException
+     */
+    private function getFeatureHealthSingle(string $featureKey): Models\FeatureHealth
+    {
+        $url = "/sdk/v1/features/{$featureKey}/health";
+
+        try {
+            $response = $this->httpClient->get($url);
+            $responseData = json_decode($response->getBody()->getContents(), true);
+
+            return Models\FeatureHealth::fromArray($responseData);
+        } catch (RequestException $e) {
+            $this->handleHttpError($e, $featureKey);
+        }
+    }
+
+    /**
+     * Check if an exception should trigger a retry.
+     */
+    private function shouldRetry(TogglrException $e): bool
+    {
+        return !($e instanceof UnauthorizedException) &&
+               !($e instanceof BadRequestException) &&
+               !($e instanceof FeatureNotFoundException);
+    }
+
+    /**
+     * Handle HTTP errors and convert to appropriate exceptions.
+     *
+     * @throws TogglrException
+     */
+    private function handleHttpError(RequestException $e, string $featureKey): void
+    {
+        $response = $e->getResponse();
+        
+        if (!$response) {
+            throw new TogglrException('Request failed: ' . $e->getMessage());
+        }
+
+        $statusCode = $response->getStatusCode();
+
+        switch ($statusCode) {
+            case 401:
+                throw new UnauthorizedException('Authentication required');
+            case 400:
+                throw new BadRequestException('Bad request');
+            case 404:
+                throw new FeatureNotFoundException("Feature '{$featureKey}' not found");
+            case 429:
+                throw new TooManyRequestsException('Too many requests');
+            case 500:
+                throw new InternalServerException('Internal server error');
+            default:
+                throw new TogglrException("HTTP {$statusCode}");
+        }
+    }
 }
