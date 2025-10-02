@@ -12,9 +12,6 @@ composer.lock
 .DS_Store
 Thumbs.db
 
-# Generated files
-internal/generated/
-
 # Test results
 /coverage/
 .phpunit.result.cache
