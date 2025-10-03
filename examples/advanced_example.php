@@ -76,11 +76,8 @@ function main(): void
 
         foreach ($errorExamples as [$errorType, $message, $contextData]) {
             try {
-                [$health, $isPending] = $client->reportError($featureKey, $errorType, $message, $contextData);
-                echo "Reported {$errorType} error: pending=" . ($isPending ? 'true' : 'false') . "\n";
-                echo "  Health: enabled=" . ($health->isEnabled() ? 'true' : 'false') . 
-                     ", auto_disabled=" . ($health->isAutoDisabled() ? 'true' : 'false') . "\n";
-                echo "  Error rate: {$health->getErrorRate()}, threshold: {$health->getThreshold()}\n";
+                $client->reportError($featureKey, $errorType, $message, $contextData);
+                echo "Reported {$errorType} error successfully - queued for processing\n";
             } catch (TogglrException $e) {
                 echo "Failed to report {$errorType} error: {$e->getMessage()}\n";
             }

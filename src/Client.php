@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Togglr\Sdk;
 
-use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\RequestException;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
@@ -19,12 +16,18 @@ use Togglr\Sdk\Exception\TogglrException;
 use Togglr\Sdk\Exception\TooManyRequestsException;
 use Togglr\Sdk\Exception\UnauthorizedException;
 
+// Generated API client
+use Togglr\Client\Api\DefaultApi;
+use Togglr\Client\Configuration as ApiConfiguration;
+use Togglr\Client\Model\FeatureErrorReport;
+use Togglr\Client\Model\FeatureHealth as ApiFeatureHealth;
+
 /**
  * Togglr SDK client for feature flag evaluation.
  */
 class Client
 {
-    private GuzzleClient $httpClient;
+    private DefaultApi $apiClient;
     private ClientConfig $config;
     private ?CacheItemPoolInterface $cache;
     private ?LoggerInterface $logger;
@@ -34,20 +37,15 @@ class Client
         $this->config = $config;
         $this->logger = $config->getLogger();
 
-        // Create HTTP client
-        $this->httpClient = new GuzzleClient([
-            'base_uri' => $config->getBaseUrl(),
-            'timeout' => $config->getTimeout(),
-            'headers' => [
-                'Authorization' => $config->getApiKey(),
-                'Content-Type' => 'application/json',
-                'User-Agent' => 'togglr-sdk-php/1.0.0',
-            ],
-        ]);
+        // Create API client
+        $apiConfig = new ApiConfiguration();
+        $apiConfig->setHost($config->getBaseUrl());
+        $apiConfig->setApiKey('Authorization', $config->getApiKey());
+        $this->apiClient = new DefaultApi(null, $apiConfig);
 
         // Initialize cache if enabled
         if ($config->isCacheEnabled()) {
-            $this->cache = new ArrayAdapter($config->getCacheTtl(), $config->getCacheMaxSize());
+            $this->cache = new ArrayAdapter($config->getCacheTtl(), true);
         } else {
             $this->cache = null;
         }
@@ -70,13 +68,10 @@ class Client
     public function healthCheck(): bool
     {
         try {
-            $response = $this->httpClient->get('/sdk/v1/health');
-            $data = json_decode($response->getBody()->getContents(), true);
-
-            return isset($data['status']) && $data['status'] === 'ok';
-        } catch (GuzzleException $e) {
+            $response = $this->apiClient->healthCheck();
+            return isset($response['status']) && $response['status'] === 'ok';
+        } catch (\Exception $e) {
             $this->log('Health check failed', ['error' => $e->getMessage()]);
-
             return false;
         }
     }
@@ -201,62 +196,32 @@ class Client
     private function evaluateSingle(string $featureKey, RequestContext $context): array
     {
         try {
-            $response = $this->httpClient->post("/sdk/v1/features/{$featureKey}/evaluate", [
-                'json' => $context->toArray(),
-            ]);
+            $response = $this->apiClient->evaluateFeature($featureKey, $context->toArray());
 
-            $data = json_decode($response->getBody()->getContents(), true);
-
-            if (isset($data['feature_key'], $data['enabled'], $data['value'])) {
+            if (isset($response['feature_key'], $response['enabled'], $response['value'])) {
                 return [
-                    'value' => $data['value'],
-                    'enabled' => $data['enabled'],
+                    'value' => $response['value'],
+                    'enabled' => $response['enabled'],
                     'found' => true,
                 ];
             }
 
             return ['value' => '', 'enabled' => false, 'found' => false];
-        } catch (RequestException $e) {
-            $this->handleHttpException($e);
+        } catch (\Togglr\Client\ApiException $e) {
+            $this->handleApiException($e, $featureKey);
         }
     }
 
-    /**
-     * Handle HTTP exceptions and convert to appropriate Togglr exceptions.
-     *
-     * @throws TogglrException
-     */
-    private function handleHttpException(RequestException $e): void
-    {
-        $statusCode = $e->getResponse()?->getStatusCode() ?? 0;
-
-        switch ($statusCode) {
-            case 401:
-                throw new UnauthorizedException('Authentication required');
-            case 400:
-                throw new BadRequestException('Bad request');
-            case 404:
-                throw new NotFoundException('Resource not found');
-            case 429:
-                throw new TooManyRequestsException('Too many requests');
-            case 500:
-            default:
-                if ($statusCode >= 500) {
-                    throw new InternalServerException('Internal server error');
-                }
-                throw new TogglrException('API error: ' . $statusCode);
-        }
-    }
 
     /**
      * Generate cache key for feature and context.
      */
     private function getCacheKey(string $featureKey, RequestContext $context): string
     {
-        $contextString = json_encode($context->toArray(), JSON_SORT_KEYS);
+        $contextString = json_encode($context->toArray(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         $contextHash = md5($contextString);
 
-        return "{$featureKey}:{$contextHash}";
+        return "{$featureKey}_{$contextHash}";
     }
 
     /**
@@ -272,12 +237,11 @@ class Client
     /**
      * Report an error for a feature.
      *
-     * @return array{0: FeatureHealth, 1: bool} Returns [health, is_pending]
      * @throws TogglrException
      */
-    public function reportError(string $featureKey, string $errorType, string $errorMessage, array $context = []): array
+    public function reportError(string $featureKey, string $errorType, string $errorMessage, array $context = []): void
     {
-        return $this->reportErrorWithRetries($featureKey, $errorType, $errorMessage, $context);
+        $this->reportErrorWithRetries($featureKey, $errorType, $errorMessage, $context);
     }
 
     /**
@@ -304,10 +268,9 @@ class Client
     /**
      * Report error with retry logic.
      *
-     * @return array{0: FeatureHealth, 1: bool} Returns [health, is_pending]
      * @throws TogglrException
      */
-    private function reportErrorWithRetries(string $featureKey, string $errorType, string $errorMessage, array $context): array
+    private function reportErrorWithRetries(string $featureKey, string $errorType, string $errorMessage, array $context): void
     {
         $errorReport = Models\ErrorReport::new($errorType, $errorMessage, $context);
         
@@ -316,7 +279,8 @@ class Client
 
         while ($attempt < $maxAttempts) {
             try {
-                return $this->reportErrorSingle($featureKey, $errorReport);
+                $this->reportErrorSingle($featureKey, $errorReport);
+                return; // Success
             } catch (TogglrException $e) {
                 $attempt++;
                 
@@ -335,33 +299,22 @@ class Client
     /**
      * Report error single attempt.
      *
-     * @return array{0: FeatureHealth, 1: bool} Returns [health, is_pending]
      * @throws TogglrException
      */
-    private function reportErrorSingle(string $featureKey, Models\ErrorReport $errorReport): array
+    private function reportErrorSingle(string $featureKey, Models\ErrorReport $errorReport): void
     {
-        $url = "/sdk/v1/features/{$featureKey}/report-error";
-        $body = json_encode($errorReport->toArray());
-
         try {
-            $response = $this->httpClient->post($url, [
-                'body' => $body,
+            // Convert our ErrorReport to generated FeatureErrorReport
+            $apiErrorReport = new FeatureErrorReport([
+                'error_type' => $errorReport->getErrorType(),
+                'error_message' => $errorReport->getErrorMessage(),
+                'context' => $errorReport->getContext(),
             ]);
 
-            $statusCode = $response->getStatusCode();
-            $responseData = json_decode($response->getBody()->getContents(), true);
-
-            if ($statusCode === 200) {
-                $health = Models\FeatureHealth::fromArray($responseData);
-                return [$health, false]; // health, is_pending
-            } elseif ($statusCode === 202) {
-                $health = Models\FeatureHealth::fromArray($responseData);
-                return [$health, true]; // health, is_pending
-            } else {
-                throw new TogglrException("Unexpected status code: {$statusCode}");
-            }
-        } catch (RequestException $e) {
-            $this->handleHttpError($e, $featureKey);
+            $this->apiClient->reportFeatureError($featureKey, $apiErrorReport);
+            // Success - error queued for processing
+        } catch (\Togglr\Client\ApiException $e) {
+            $this->handleApiException($e, $featureKey);
         }
     }
 
@@ -400,15 +353,11 @@ class Client
      */
     private function getFeatureHealthSingle(string $featureKey): Models\FeatureHealth
     {
-        $url = "/sdk/v1/features/{$featureKey}/health";
-
         try {
-            $response = $this->httpClient->get($url);
-            $responseData = json_decode($response->getBody()->getContents(), true);
-
-            return Models\FeatureHealth::fromArray($responseData);
-        } catch (RequestException $e) {
-            $this->handleHttpError($e, $featureKey);
+            $apiHealth = $this->apiClient->getFeatureHealth($featureKey);
+            return $this->convertFeatureHealth($apiHealth);
+        } catch (\Togglr\Client\ApiException $e) {
+            $this->handleApiException($e, $featureKey);
         }
     }
 
@@ -451,5 +400,44 @@ class Client
             default:
                 throw new TogglrException("HTTP {$statusCode}");
         }
+    }
+
+    /**
+     * Handle API exceptions and convert to appropriate SDK exceptions.
+     *
+     * @throws TogglrException
+     */
+    private function handleApiException(\Togglr\Client\ApiException $e, string $featureKey): void
+    {
+        $statusCode = $e->getCode();
+        
+        switch ($statusCode) {
+            case 401:
+                throw new UnauthorizedException('Authentication required');
+            case 400:
+                throw new BadRequestException('Bad request');
+            case 404:
+                throw new FeatureNotFoundException("Feature {$featureKey} not found");
+            case 500:
+                throw new InternalServerException('Internal server error');
+            default:
+                throw new TogglrException("API error: {$e->getMessage()}", $statusCode);
+        }
+    }
+
+    /**
+     * Convert API FeatureHealth to SDK FeatureHealth.
+     */
+    private function convertFeatureHealth(ApiFeatureHealth $apiHealth): Models\FeatureHealth
+    {
+        return Models\FeatureHealth::new(
+            featureKey: $apiHealth->getFeatureKey(),
+            environmentKey: $apiHealth->getEnvironmentKey(),
+            enabled: $apiHealth->getEnabled() ?? false,
+            autoDisabled: $apiHealth->getAutoDisabled() ?? false,
+            errorRate: $apiHealth->getErrorRate() ?? 0.0,
+            threshold: $apiHealth->getThreshold() ?? 0.0,
+            lastErrorAt: $apiHealth->getLastErrorAt()
+        );
     }
 }

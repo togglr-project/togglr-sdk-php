@@ -24,7 +24,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Togglr\\Sdk\\": "src/"
+            "Togglr\\Sdk\\": "src/",
+            "Togglr\\Client\\": "generated/lib/"
         }
     },
     "autoload-dev": {

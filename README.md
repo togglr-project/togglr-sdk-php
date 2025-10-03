@@ -150,16 +150,14 @@ The SDK supports reporting errors for features, which can trigger automatic disa
 
 ```php
 // Report an error for a feature
-[$health, $isPending] = $client->reportError(
+$client->reportError(
     'feature_key',
     'timeout',
     'Service did not respond in 5s',
     ['service' => 'payment-gateway', 'timeout_ms' => 5000]
 );
 
-echo "Error reported: pending=" . ($isPending ? 'true' : 'false') . "\n";
-echo "Feature health: enabled=" . ($health->isEnabled() ? 'true' : 'false') . 
-     ", auto_disabled=" . ($health->isAutoDisabled() ? 'true' : 'false') . "\n";
+echo "Error reported successfully - queued for processing\n";
 ```
 
 ### Error Types
@@ -184,7 +182,7 @@ $context = [
     'region' => 'us-east-1'
 ];
 
-[$health, $isPending] = $client->reportError(
+$client->reportError(
     'feature_key',
     'timeout',
     'Service timeout',
