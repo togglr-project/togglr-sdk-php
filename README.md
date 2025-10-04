@@ -90,6 +90,7 @@ $client = TogglrSdk::newClient('api-key', [
         'max_size' => 1000,
         'ttl_seconds' => 10,
     ],
+    'insecure' => true, // Skip SSL verification for self-signed certificates
 ]);
 ```
 

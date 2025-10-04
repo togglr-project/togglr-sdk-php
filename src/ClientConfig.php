@@ -20,6 +20,7 @@ class ClientConfig
     private int $cacheMaxSize;
     private int $cacheTtl;
     private ?LoggerInterface $logger;
+    private bool $insecure;
 
     public function __construct(
         string $apiKey,
@@ -30,7 +31,8 @@ class ClientConfig
         bool $cacheEnabled = false,
         int $cacheMaxSize = 100,
         int $cacheTtl = 5,
-        ?LoggerInterface $logger = null
+        ?LoggerInterface $logger = null,
+        bool $insecure = false
     ) {
         $this->apiKey = $apiKey;
         $this->baseUrl = rtrim($baseUrl, '/');
@@ -41,6 +43,7 @@ class ClientConfig
         $this->cacheMaxSize = $cacheMaxSize;
         $this->cacheTtl = $cacheTtl;
         $this->logger = $logger;
+        $this->insecure = $insecure;
     }
 
     /**
@@ -94,6 +97,11 @@ class ClientConfig
     public function getLogger(): ?LoggerInterface
     {
         return $this->logger;
+    }
+
+    public function isInsecure(): bool
+    {
+        return $this->insecure;
     }
 
     /**
@@ -160,6 +168,17 @@ class ClientConfig
     {
         $new = clone $this;
         $new->logger = $logger;
+
+        return $new;
+    }
+
+    /**
+     * Enable insecure mode (skip SSL verification).
+     */
+    public function withInsecure(): self
+    {
+        $new = clone $this;
+        $new->insecure = true;
 
         return $new;
     }

@@ -41,6 +41,12 @@ class Client
         $apiConfig = new ApiConfiguration();
         $apiConfig->setHost($config->getBaseUrl());
         $apiConfig->setApiKey('Authorization', $config->getApiKey());
+        
+        // Configure SSL verification if insecure mode is enabled
+        if ($config->isInsecure()) {
+            $apiConfig->setVerifySsl(false);
+        }
+        
         $this->apiClient = new DefaultApi(null, $apiConfig);
 
         // Initialize cache if enabled
