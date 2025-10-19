@@ -5,7 +5,7 @@ PHP SDK for working with Togglr - feature flag management system.
 ## Installation
 
 ```bash
-composer require togglr/sdk-php
+composer require togglr-project/togglr-sdk-php
 ```
 
 ## Package Structure
