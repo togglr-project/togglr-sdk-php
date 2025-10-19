@@ -5,7 +5,7 @@
  * PHP version 8.1
  *
  * @category Class
- * @package  Togglr\Client
+ * @package  TogglrClient
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */
@@ -26,16 +26,16 @@
  * Do not edit the class manually.
  */
 
-namespace Togglr\Client\Model;
+namespace TogglrClient\Model;
 
 use \ArrayAccess;
-use \Togglr\Client\ObjectSerializer;
+use \TogglrClient\ObjectSerializer;
 
 /**
  * ErrorUnauthorized Class Doc Comment
  *
  * @category Class
- * @package  Togglr\Client
+ * @package  TogglrClient
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  * @implements \ArrayAccess<string, mixed>
@@ -57,7 +57,7 @@ class ErrorUnauthorized implements ModelInterface, ArrayAccess, \JsonSerializabl
       * @var string[]
       */
     protected static $openAPITypes = [
-        'error' => '\Togglr\Client\Model\ErrorError'
+        'error' => '\TogglrClient\Model\ErrorError'
     ];
 
     /**
@@ -295,7 +295,7 @@ class ErrorUnauthorized implements ModelInterface, ArrayAccess, \JsonSerializabl
     /**
      * Gets error
      *
-     * @return \Togglr\Client\Model\ErrorError
+     * @return \TogglrClient\Model\ErrorError
      */
     public function getError()
     {
@@ -305,7 +305,7 @@ class ErrorUnauthorized implements ModelInterface, ArrayAccess, \JsonSerializabl
     /**
      * Sets error
      *
-     * @param \Togglr\Client\Model\ErrorError $error error
+     * @param \TogglrClient\Model\ErrorError $error error
      *
      * @return self
      */

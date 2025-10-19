@@ -4,7 +4,7 @@
  * PHP version 7.4
  *
  * @category Class
- * @package  Togglr\Client
+ * @package  TogglrClient
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */
@@ -25,20 +25,20 @@
  * Do not edit the class manually.
  */
 
-namespace Togglr\Client;
+namespace TogglrClient;
 
 use ArrayAccess;
 use DateTime;
 use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Message\StreamInterface;
 use SplFileObject;
-use Togglr\Client\Model\ModelInterface;
+use TogglrClient\Model\ModelInterface;
 
 /**
  * FormDataProcessor Class Doc Comment
  *
  * @category Class
- * @package  Togglr\Client
+ * @package  TogglrClient
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */

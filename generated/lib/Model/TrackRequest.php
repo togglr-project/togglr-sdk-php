@@ -1,6 +1,6 @@
 <?php
 /**
- * FeatureHealth
+ * TrackRequest
  *
  * PHP version 8.1
  *
@@ -32,15 +32,16 @@ use \ArrayAccess;
 use \TogglrClient\ObjectSerializer;
 
 /**
- * FeatureHealth Class Doc Comment
+ * TrackRequest Class Doc Comment
  *
  * @category Class
+ * @description Event sent from SDK. SDK SHOULD send an impression event for each evaluation (recommended). Conversions / errors / custom events are used to update algorithm statistics.
  * @package  TogglrClient
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  * @implements \ArrayAccess<string, mixed>
  */
-class FeatureHealth implements ModelInterface, ArrayAccess, \JsonSerializable
+class TrackRequest implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -49,7 +50,7 @@ class FeatureHealth implements ModelInterface, ArrayAccess, \JsonSerializable
       *
       * @var string
       */
-    protected static $openAPIModelName = 'FeatureHealth';
+    protected static $openAPIModelName = 'TrackRequest';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,13 +58,12 @@ class FeatureHealth implements ModelInterface, ArrayAccess, \JsonSerializable
       * @var string[]
       */
     protected static $openAPITypes = [
-        'feature_key' => 'string',
-        'environment_key' => 'string',
-        'enabled' => 'bool',
-        'auto_disabled' => 'bool',
-        'error_rate' => 'float',
-        'threshold' => 'float',
-        'last_error_at' => '\DateTime'
+        'variant_key' => 'string',
+        'event_type' => 'string',
+        'reward' => 'float',
+        'context' => 'array<string,mixed>',
+        'created_at' => '\DateTime',
+        'dedup_key' => 'string'
     ];
 
     /**
@@ -74,13 +74,12 @@ class FeatureHealth implements ModelInterface, ArrayAccess, \JsonSerializable
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'feature_key' => null,
-        'environment_key' => null,
-        'enabled' => null,
-        'auto_disabled' => null,
-        'error_rate' => 'float',
-        'threshold' => 'float',
-        'last_error_at' => 'date-time'
+        'variant_key' => null,
+        'event_type' => null,
+        'reward' => 'float',
+        'context' => null,
+        'created_at' => 'date-time',
+        'dedup_key' => null
     ];
 
     /**
@@ -89,13 +88,12 @@ class FeatureHealth implements ModelInterface, ArrayAccess, \JsonSerializable
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'feature_key' => false,
-        'environment_key' => false,
-        'enabled' => false,
-        'auto_disabled' => false,
-        'error_rate' => false,
-        'threshold' => false,
-        'last_error_at' => false
+        'variant_key' => false,
+        'event_type' => false,
+        'reward' => false,
+        'context' => false,
+        'created_at' => false,
+        'dedup_key' => false
     ];
 
     /**
@@ -184,13 +182,12 @@ class FeatureHealth implements ModelInterface, ArrayAccess, \JsonSerializable
      * @var string[]
      */
     protected static $attributeMap = [
-        'feature_key' => 'feature_key',
-        'environment_key' => 'environment_key',
-        'enabled' => 'enabled',
-        'auto_disabled' => 'auto_disabled',
-        'error_rate' => 'error_rate',
-        'threshold' => 'threshold',
-        'last_error_at' => 'last_error_at'
+        'variant_key' => 'variant_key',
+        'event_type' => 'event_type',
+        'reward' => 'reward',
+        'context' => 'context',
+        'created_at' => 'created_at',
+        'dedup_key' => 'dedup_key'
     ];
 
     /**
@@ -199,13 +196,12 @@ class FeatureHealth implements ModelInterface, ArrayAccess, \JsonSerializable
      * @var string[]
      */
     protected static $setters = [
-        'feature_key' => 'setFeatureKey',
-        'environment_key' => 'setEnvironmentKey',
-        'enabled' => 'setEnabled',
-        'auto_disabled' => 'setAutoDisabled',
-        'error_rate' => 'setErrorRate',
-        'threshold' => 'setThreshold',
-        'last_error_at' => 'setLastErrorAt'
+        'variant_key' => 'setVariantKey',
+        'event_type' => 'setEventType',
+        'reward' => 'setReward',
+        'context' => 'setContext',
+        'created_at' => 'setCreatedAt',
+        'dedup_key' => 'setDedupKey'
     ];
 
     /**
@@ -214,13 +210,12 @@ class FeatureHealth implements ModelInterface, ArrayAccess, \JsonSerializable
      * @var string[]
      */
     protected static $getters = [
-        'feature_key' => 'getFeatureKey',
-        'environment_key' => 'getEnvironmentKey',
-        'enabled' => 'getEnabled',
-        'auto_disabled' => 'getAutoDisabled',
-        'error_rate' => 'getErrorRate',
-        'threshold' => 'getThreshold',
-        'last_error_at' => 'getLastErrorAt'
+        'variant_key' => 'getVariantKey',
+        'event_type' => 'getEventType',
+        'reward' => 'getReward',
+        'context' => 'getContext',
+        'created_at' => 'getCreatedAt',
+        'dedup_key' => 'getDedupKey'
     ];
 
     /**
@@ -264,6 +259,23 @@ class FeatureHealth implements ModelInterface, ArrayAccess, \JsonSerializable
         return self::$openAPIModelName;
     }
 
+    public const EVENT_TYPE_SUCCESS = 'success';
+    public const EVENT_TYPE_FAILURE = 'failure';
+    public const EVENT_TYPE_ERROR = 'error';
+
+    /**
+     * Gets allowable values of the enum
+     *
+     * @return string[]
+     */
+    public function getEventTypeAllowableValues()
+    {
+        return [
+            self::EVENT_TYPE_SUCCESS,
+            self::EVENT_TYPE_FAILURE,
+            self::EVENT_TYPE_ERROR,
+        ];
+    }
 
     /**
      * Associative array for storing property values
@@ -280,13 +292,12 @@ class FeatureHealth implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function __construct(?array $data = null)
     {
-        $this->setIfExists('feature_key', $data ?? [], null);
-        $this->setIfExists('environment_key', $data ?? [], null);
-        $this->setIfExists('enabled', $data ?? [], null);
-        $this->setIfExists('auto_disabled', $data ?? [], null);
-        $this->setIfExists('error_rate', $data ?? [], null);
-        $this->setIfExists('threshold', $data ?? [], null);
-        $this->setIfExists('last_error_at', $data ?? [], null);
+        $this->setIfExists('variant_key', $data ?? [], null);
+        $this->setIfExists('event_type', $data ?? [], null);
+        $this->setIfExists('reward', $data ?? [], null);
+        $this->setIfExists('context', $data ?? [], null);
+        $this->setIfExists('created_at', $data ?? [], null);
+        $this->setIfExists('dedup_key', $data ?? [], null);
     }
 
     /**
@@ -316,18 +327,21 @@ class FeatureHealth implements ModelInterface, ArrayAccess, \JsonSerializable
     {
         $invalidProperties = [];
 
-        if ($this->container['feature_key'] === null) {
-            $invalidProperties[] = "'feature_key' can't be null";
+        if ($this->container['variant_key'] === null) {
+            $invalidProperties[] = "'variant_key' can't be null";
         }
-        if ($this->container['environment_key'] === null) {
-            $invalidProperties[] = "'environment_key' can't be null";
+        if ($this->container['event_type'] === null) {
+            $invalidProperties[] = "'event_type' can't be null";
         }
-        if ($this->container['enabled'] === null) {
-            $invalidProperties[] = "'enabled' can't be null";
+        $allowedValues = $this->getEventTypeAllowableValues();
+        if (!is_null($this->container['event_type']) && !in_array($this->container['event_type'], $allowedValues, true)) {
+            $invalidProperties[] = sprintf(
+                "invalid value '%s' for 'event_type', must be one of '%s'",
+                $this->container['event_type'],
+                implode("', '", $allowedValues)
+            );
         }
-        if ($this->container['auto_disabled'] === null) {
-            $invalidProperties[] = "'auto_disabled' can't be null";
-        }
+
         return $invalidProperties;
     }
 
@@ -344,190 +358,173 @@ class FeatureHealth implements ModelInterface, ArrayAccess, \JsonSerializable
 
 
     /**
-     * Gets feature_key
+     * Gets variant_key
      *
      * @return string
      */
-    public function getFeatureKey()
+    public function getVariantKey()
     {
-        return $this->container['feature_key'];
+        return $this->container['variant_key'];
     }
 
     /**
-     * Sets feature_key
+     * Sets variant_key
      *
-     * @param string $feature_key feature_key
+     * @param string $variant_key Variant key returned by evaluate (e.g. \"A\", \"v2\").
      *
      * @return self
      */
-    public function setFeatureKey($feature_key)
+    public function setVariantKey($variant_key)
     {
-        if (is_null($feature_key)) {
-            throw new \InvalidArgumentException('non-nullable feature_key cannot be null');
+        if (is_null($variant_key)) {
+            throw new \InvalidArgumentException('non-nullable variant_key cannot be null');
         }
-        $this->container['feature_key'] = $feature_key;
+        $this->container['variant_key'] = $variant_key;
 
         return $this;
     }
 
     /**
-     * Gets environment_key
+     * Gets event_type
      *
      * @return string
      */
-    public function getEnvironmentKey()
+    public function getEventType()
     {
-        return $this->container['environment_key'];
+        return $this->container['event_type'];
     }
 
     /**
-     * Sets environment_key
+     * Sets event_type
      *
-     * @param string $environment_key environment_key
+     * @param string $event_type Type of event (e.g. \"success\", \"failure\", \"error\").
      *
      * @return self
      */
-    public function setEnvironmentKey($environment_key)
+    public function setEventType($event_type)
     {
-        if (is_null($environment_key)) {
-            throw new \InvalidArgumentException('non-nullable environment_key cannot be null');
+        if (is_null($event_type)) {
+            throw new \InvalidArgumentException('non-nullable event_type cannot be null');
         }
-        $this->container['environment_key'] = $environment_key;
+        $allowedValues = $this->getEventTypeAllowableValues();
+        if (!in_array($event_type, $allowedValues, true)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    "Invalid value '%s' for 'event_type', must be one of '%s'",
+                    $event_type,
+                    implode("', '", $allowedValues)
+                )
+            );
+        }
+        $this->container['event_type'] = $event_type;
 
         return $this;
     }
 
     /**
-     * Gets enabled
-     *
-     * @return bool
-     */
-    public function getEnabled()
-    {
-        return $this->container['enabled'];
-    }
-
-    /**
-     * Sets enabled
-     *
-     * @param bool $enabled enabled
-     *
-     * @return self
-     */
-    public function setEnabled($enabled)
-    {
-        if (is_null($enabled)) {
-            throw new \InvalidArgumentException('non-nullable enabled cannot be null');
-        }
-        $this->container['enabled'] = $enabled;
-
-        return $this;
-    }
-
-    /**
-     * Gets auto_disabled
-     *
-     * @return bool
-     */
-    public function getAutoDisabled()
-    {
-        return $this->container['auto_disabled'];
-    }
-
-    /**
-     * Sets auto_disabled
-     *
-     * @param bool $auto_disabled auto_disabled
-     *
-     * @return self
-     */
-    public function setAutoDisabled($auto_disabled)
-    {
-        if (is_null($auto_disabled)) {
-            throw new \InvalidArgumentException('non-nullable auto_disabled cannot be null');
-        }
-        $this->container['auto_disabled'] = $auto_disabled;
-
-        return $this;
-    }
-
-    /**
-     * Gets error_rate
+     * Gets reward
      *
      * @return float|null
      */
-    public function getErrorRate()
+    public function getReward()
     {
-        return $this->container['error_rate'];
+        return $this->container['reward'];
     }
 
     /**
-     * Sets error_rate
+     * Sets reward
      *
-     * @param float|null $error_rate error_rate
+     * @param float|null $reward Numeric reward associated with event (e.g. 1.0 for conversion). Default 0.
      *
      * @return self
      */
-    public function setErrorRate($error_rate)
+    public function setReward($reward)
     {
-        if (is_null($error_rate)) {
-            throw new \InvalidArgumentException('non-nullable error_rate cannot be null');
+        if (is_null($reward)) {
+            throw new \InvalidArgumentException('non-nullable reward cannot be null');
         }
-        $this->container['error_rate'] = $error_rate;
+        $this->container['reward'] = $reward;
 
         return $this;
     }
 
     /**
-     * Gets threshold
+     * Gets context
      *
-     * @return float|null
+     * @return array<string,mixed>|null
      */
-    public function getThreshold()
+    public function getContext()
     {
-        return $this->container['threshold'];
+        return $this->container['context'];
     }
 
     /**
-     * Sets threshold
+     * Sets context
      *
-     * @param float|null $threshold threshold
+     * @param array<string,mixed>|null $context Arbitrary context passed by SDK (user id, session, metadata).
      *
      * @return self
      */
-    public function setThreshold($threshold)
+    public function setContext($context)
     {
-        if (is_null($threshold)) {
-            throw new \InvalidArgumentException('non-nullable threshold cannot be null');
+        if (is_null($context)) {
+            throw new \InvalidArgumentException('non-nullable context cannot be null');
         }
-        $this->container['threshold'] = $threshold;
+        $this->container['context'] = $context;
 
         return $this;
     }
 
     /**
-     * Gets last_error_at
+     * Gets created_at
      *
      * @return \DateTime|null
      */
-    public function getLastErrorAt()
+    public function getCreatedAt()
     {
-        return $this->container['last_error_at'];
+        return $this->container['created_at'];
     }
 
     /**
-     * Sets last_error_at
+     * Sets created_at
      *
-     * @param \DateTime|null $last_error_at last_error_at
+     * @param \DateTime|null $created_at Event timestamp. If omitted, server time will be used.
      *
      * @return self
      */
-    public function setLastErrorAt($last_error_at)
+    public function setCreatedAt($created_at)
     {
-        if (is_null($last_error_at)) {
-            throw new \InvalidArgumentException('non-nullable last_error_at cannot be null');
+        if (is_null($created_at)) {
+            throw new \InvalidArgumentException('non-nullable created_at cannot be null');
         }
-        $this->container['last_error_at'] = $last_error_at;
+        $this->container['created_at'] = $created_at;
+
+        return $this;
+    }
+
+    /**
+     * Gets dedup_key
+     *
+     * @return string|null
+     */
+    public function getDedupKey()
+    {
+        return $this->container['dedup_key'];
+    }
+
+    /**
+     * Sets dedup_key
+     *
+     * @param string|null $dedup_key Optional idempotency key to deduplicate duplicate events from SDK retries.
+     *
+     * @return self
+     */
+    public function setDedupKey($dedup_key)
+    {
+        if (is_null($dedup_key)) {
+            throw new \InvalidArgumentException('non-nullable dedup_key cannot be null');
+        }
+        $this->container['dedup_key'] = $dedup_key;
 
         return $this;
     }

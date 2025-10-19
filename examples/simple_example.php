@@ -4,6 +4,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Togglr\Sdk\Exception\FeatureNotFoundException;
 use Togglr\Sdk\Exception\TogglrException;
+use Togglr\Sdk\Models\TrackEvent;
 use Togglr\Sdk\RequestContext;
 use Togglr\Sdk\TogglrSdk;
 
@@ -14,7 +15,7 @@ function main(): void
 {
     // Create client with default configuration
     $client = TogglrSdk::newClient(
-        'your-api-key-here',
+        '42b6f8f1-630c-400c-97bd-a3454a07f700',
         [
             'base_url' => 'http://localhost:8090',
             'timeout' => 1.0,
@@ -99,6 +100,50 @@ function main(): void
             echo "Feature new_ui is healthy: " . ($isHealthy ? 'true' : 'false') . "\n";
         } catch (TogglrException $e) {
             echo "Failed to check feature health: {$e->getMessage()}\n";
+        }
+
+        // Example: Track events for analytics
+        // Track impression event (recommended for each evaluation)
+        $impressionEvent = TrackEvent::new('A', TrackEvent::EVENT_TYPE_SUCCESS)
+            ->withContext('user.id', 'user123')
+            ->withContext('country', 'US')
+            ->withContext('device_type', 'mobile')
+            ->withDedupKey('impression-user123-new_ui');
+
+        try {
+            $client->trackEvent('new_ui', $impressionEvent);
+            echo "Impression event tracked successfully\n";
+        } catch (TogglrException $e) {
+            echo "Error tracking impression event: {$e->getMessage()}\n";
+        }
+
+        // Track conversion event with reward
+        $conversionEvent = TrackEvent::new('A', TrackEvent::EVENT_TYPE_SUCCESS)
+            ->withReward(1.0)
+            ->withContext('user.id', 'user123')
+            ->withContext('conversion_type', 'purchase')
+            ->withContext('order_value', 99.99)
+            ->withDedupKey('conversion-user123-new_ui');
+
+        try {
+            $client->trackEvent('new_ui', $conversionEvent);
+            echo "Conversion event tracked successfully\n";
+        } catch (TogglrException $e) {
+            echo "Error tracking conversion event: {$e->getMessage()}\n";
+        }
+
+        // Track error event
+        $errorEvent = TrackEvent::new('B', TrackEvent::EVENT_TYPE_ERROR)
+            ->withContext('user.id', 'user123')
+            ->withContext('error_type', 'timeout')
+            ->withContext('error_message', 'Service did not respond in 5s')
+            ->withDedupKey('error-user123-new_ui');
+
+        try {
+            $client->trackEvent('new_ui', $errorEvent);
+            echo "Error event tracked successfully\n";
+        } catch (TogglrException $e) {
+            echo "Error tracking error event: {$e->getMessage()}\n";
         }
     } finally {
         $client->close();

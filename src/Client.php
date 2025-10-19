@@ -17,10 +17,11 @@ use Togglr\Sdk\Exception\TooManyRequestsException;
 use Togglr\Sdk\Exception\UnauthorizedException;
 
 // Generated API client
-use Togglr\Client\Api\DefaultApi;
-use Togglr\Client\Configuration as ApiConfiguration;
-use Togglr\Client\Model\FeatureErrorReport;
-use Togglr\Client\Model\FeatureHealth as ApiFeatureHealth;
+use TogglrClient\Api\DefaultApi;
+use TogglrClient\Configuration as ApiConfiguration;
+use TogglrClient\Model\FeatureErrorReport;
+use TogglrClient\Model\FeatureHealth as ApiFeatureHealth;
+use TogglrClient\Model\TrackRequest as ApiTrackRequest;
 
 /**
  * Togglr SDK client for feature flag evaluation.
@@ -74,7 +75,7 @@ class Client
     public function healthCheck(): bool
     {
         try {
-            $response = $this->apiClient->healthCheck();
+            $response = $this->apiClient->sdkV1HealthGet();
             return isset($response['status']) && $response['status'] === 'ok';
         } catch (\Exception $e) {
             $this->log('Health check failed', ['error' => $e->getMessage()]);
@@ -202,7 +203,7 @@ class Client
     private function evaluateSingle(string $featureKey, RequestContext $context): array
     {
         try {
-            $response = $this->apiClient->evaluateFeature($featureKey, $context->toArray());
+            $response = $this->apiClient->sdkV1FeaturesFeatureKeyEvaluatePost($featureKey, $context->toArray());
 
             if (isset($response['feature_key'], $response['enabled'], $response['value'])) {
                 return [
@@ -213,7 +214,7 @@ class Client
             }
 
             return ['value' => '', 'enabled' => false, 'found' => false];
-        } catch (\Togglr\Client\ApiException $e) {
+        } catch (\TogglrClient\ApiException $e) {
             $this->handleApiException($e, $featureKey);
         }
     }
@@ -319,7 +320,7 @@ class Client
 
             $this->apiClient->reportFeatureError($featureKey, $apiErrorReport);
             // Success - error queued for processing
-        } catch (\Togglr\Client\ApiException $e) {
+        } catch (\TogglrClient\ApiException $e) {
             $this->handleApiException($e, $featureKey);
         }
     }
@@ -362,7 +363,7 @@ class Client
         try {
             $apiHealth = $this->apiClient->getFeatureHealth($featureKey);
             return $this->convertFeatureHealth($apiHealth);
-        } catch (\Togglr\Client\ApiException $e) {
+        } catch (\TogglrClient\ApiException $e) {
             $this->handleApiException($e, $featureKey);
         }
     }
@@ -413,7 +414,7 @@ class Client
      *
      * @throws TogglrException
      */
-    private function handleApiException(\Togglr\Client\ApiException $e, string $featureKey): void
+    private function handleApiException(\TogglrClient\ApiException $e, string $featureKey): void
     {
         $statusCode = $e->getCode();
         
@@ -436,14 +437,76 @@ class Client
      */
     private function convertFeatureHealth(ApiFeatureHealth $apiHealth): Models\FeatureHealth
     {
-        return Models\FeatureHealth::new(
-            featureKey: $apiHealth->getFeatureKey(),
-            environmentKey: $apiHealth->getEnvironmentKey(),
-            enabled: $apiHealth->getEnabled() ?? false,
-            autoDisabled: $apiHealth->getAutoDisabled() ?? false,
-            errorRate: $apiHealth->getErrorRate() ?? 0.0,
-            threshold: $apiHealth->getThreshold() ?? 0.0,
-            lastErrorAt: $apiHealth->getLastErrorAt()
-        );
+        $lastErrorAt = $apiHealth->getLastErrorAt();
+        if ($lastErrorAt instanceof \DateTime) {
+            $lastErrorAt = $lastErrorAt->format('c');
+        }
+
+        return new Models\FeatureHealth([
+            'feature_key' => $apiHealth->getFeatureKey(),
+            'environment_key' => $apiHealth->getEnvironmentKey(),
+            'enabled' => $apiHealth->getEnabled() ?? false,
+            'auto_disabled' => $apiHealth->getAutoDisabled() ?? false,
+            'error_rate' => $apiHealth->getErrorRate() ?? 0.0,
+            'threshold' => $apiHealth->getThreshold() ?? 0.0,
+            'last_error_at' => $lastErrorAt
+        ]);
+    }
+
+    /**
+     * Track an event for a feature.
+     *
+     * @throws TogglrException
+     */
+    public function trackEvent(string $featureKey, Models\TrackEvent $event): void
+    {
+        $this->trackEventWithRetries($featureKey, $event);
+    }
+
+    /**
+     * Track event with retry logic.
+     *
+     * @throws TogglrException
+     */
+    private function trackEventWithRetries(string $featureKey, Models\TrackEvent $event): void
+    {
+        $attempt = 0;
+        $maxAttempts = $this->config->getRetries() + 1;
+
+        while ($attempt < $maxAttempts) {
+            try {
+                $this->trackEventSingle($featureKey, $event);
+                return; // Success
+            } catch (TogglrException $e) {
+                $attempt++;
+                
+                if ($attempt >= $maxAttempts || !$this->shouldRetry($e)) {
+                    throw $e;
+                }
+
+                $delay = $this->config->getBackoff()->calculateDelay($attempt);
+                usleep((int) ($delay * 1000000)); // Convert to microseconds
+            }
+        }
+
+        throw new TogglrException('Max retry attempts exceeded');
+    }
+
+    /**
+     * Track event single attempt.
+     *
+     * @throws TogglrException
+     */
+    private function trackEventSingle(string $featureKey, Models\TrackEvent $event): void
+    {
+        try {
+            // Convert our TrackEvent to generated TrackRequest
+            $apiTrackRequest = new ApiTrackRequest($event->toApiRequest());
+
+            $this->apiClient->trackFeatureEvent($featureKey, $apiTrackRequest);
+            // Success - event queued for processing
+        } catch (\TogglrClient\ApiException $e) {
+            $this->handleApiException($e, $featureKey);
+        }
     }
 }

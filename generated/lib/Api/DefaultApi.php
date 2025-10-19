@@ -4,7 +4,7 @@
  * PHP version 8.1
  *
  * @category Class
- * @package  Togglr\Client
+ * @package  TogglrClient
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */
@@ -25,7 +25,7 @@
  * Do not edit the class manually.
  */
 
-namespace Togglr\Client\Api;
+namespace TogglrClient\Api;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
@@ -36,17 +36,17 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Togglr\Client\ApiException;
-use Togglr\Client\Configuration;
-use Togglr\Client\FormDataProcessor;
-use Togglr\Client\HeaderSelector;
-use Togglr\Client\ObjectSerializer;
+use TogglrClient\ApiException;
+use TogglrClient\Configuration;
+use TogglrClient\FormDataProcessor;
+use TogglrClient\HeaderSelector;
+use TogglrClient\ObjectSerializer;
 
 /**
  * DefaultApi Class Doc Comment
  *
  * @category Class
- * @package  Togglr\Client
+ * @package  TogglrClient
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */
@@ -84,6 +84,9 @@ class DefaultApi
             'application/json',
         ],
         'sdkV1HealthGet' => [
+            'application/json',
+        ],
+        'trackFeatureEvent' => [
             'application/json',
         ],
     ];
@@ -142,9 +145,9 @@ class DefaultApi
      * @param  string $feature_key feature_key (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getFeatureHealth'] to see the possible values for this operation
      *
-     * @throws \Togglr\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \TogglrClient\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Togglr\Client\Model\FeatureHealth|\Togglr\Client\Model\ErrorBadRequest|\Togglr\Client\Model\ErrorUnauthorized|\Togglr\Client\Model\ErrorNotFound|\Togglr\Client\Model\ErrorInternalServerError|\Togglr\Client\Model\Error
+     * @return \TogglrClient\Model\FeatureHealth|\TogglrClient\Model\ErrorBadRequest|\TogglrClient\Model\ErrorUnauthorized|\TogglrClient\Model\ErrorNotFound|\TogglrClient\Model\ErrorInternalServerError|\TogglrClient\Model\Error
      */
     public function getFeatureHealth($feature_key, string $contentType = self::contentTypes['getFeatureHealth'][0])
     {
@@ -160,9 +163,9 @@ class DefaultApi
      * @param  string $feature_key (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['getFeatureHealth'] to see the possible values for this operation
      *
-     * @throws \Togglr\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \TogglrClient\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Togglr\Client\Model\FeatureHealth|\Togglr\Client\Model\ErrorBadRequest|\Togglr\Client\Model\ErrorUnauthorized|\Togglr\Client\Model\ErrorNotFound|\Togglr\Client\Model\ErrorInternalServerError|\Togglr\Client\Model\Error, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \TogglrClient\Model\FeatureHealth|\TogglrClient\Model\ErrorBadRequest|\TogglrClient\Model\ErrorUnauthorized|\TogglrClient\Model\ErrorNotFound|\TogglrClient\Model\ErrorInternalServerError|\TogglrClient\Model\Error, HTTP status code, HTTP response headers (array of strings)
      */
     public function getFeatureHealthWithHttpInfo($feature_key, string $contentType = self::contentTypes['getFeatureHealth'][0])
     {
@@ -194,37 +197,37 @@ class DefaultApi
             switch($statusCode) {
                 case 200:
                     return $this->handleResponseWithDataType(
-                        '\Togglr\Client\Model\FeatureHealth',
+                        '\TogglrClient\Model\FeatureHealth',
                         $request,
                         $response,
                     );
                 case 400:
                     return $this->handleResponseWithDataType(
-                        '\Togglr\Client\Model\ErrorBadRequest',
+                        '\TogglrClient\Model\ErrorBadRequest',
                         $request,
                         $response,
                     );
                 case 401:
                     return $this->handleResponseWithDataType(
-                        '\Togglr\Client\Model\ErrorUnauthorized',
+                        '\TogglrClient\Model\ErrorUnauthorized',
                         $request,
                         $response,
                     );
                 case 404:
                     return $this->handleResponseWithDataType(
-                        '\Togglr\Client\Model\ErrorNotFound',
+                        '\TogglrClient\Model\ErrorNotFound',
                         $request,
                         $response,
                     );
                 case 500:
                     return $this->handleResponseWithDataType(
-                        '\Togglr\Client\Model\ErrorInternalServerError',
+                        '\TogglrClient\Model\ErrorInternalServerError',
                         $request,
                         $response,
                     );
                 default:
                     return $this->handleResponseWithDataType(
-                        '\Togglr\Client\Model\Error',
+                        '\TogglrClient\Model\Error',
                         $request,
                         $response,
                     );
@@ -246,7 +249,7 @@ class DefaultApi
             }
 
             return $this->handleResponseWithDataType(
-                '\Togglr\Client\Model\FeatureHealth',
+                '\TogglrClient\Model\FeatureHealth',
                 $request,
                 $response,
             );
@@ -255,7 +258,7 @@ class DefaultApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Togglr\Client\Model\FeatureHealth',
+                        '\TogglrClient\Model\FeatureHealth',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -263,7 +266,7 @@ class DefaultApi
                 case 400:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Togglr\Client\Model\ErrorBadRequest',
+                        '\TogglrClient\Model\ErrorBadRequest',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -271,7 +274,7 @@ class DefaultApi
                 case 401:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Togglr\Client\Model\ErrorUnauthorized',
+                        '\TogglrClient\Model\ErrorUnauthorized',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -279,7 +282,7 @@ class DefaultApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Togglr\Client\Model\ErrorNotFound',
+                        '\TogglrClient\Model\ErrorNotFound',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -287,7 +290,7 @@ class DefaultApi
                 case 500:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Togglr\Client\Model\ErrorInternalServerError',
+                        '\TogglrClient\Model\ErrorInternalServerError',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -295,7 +298,7 @@ class DefaultApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Togglr\Client\Model\Error',
+                        '\TogglrClient\Model\Error',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -341,7 +344,7 @@ class DefaultApi
      */
     public function getFeatureHealthAsyncWithHttpInfo($feature_key, string $contentType = self::contentTypes['getFeatureHealth'][0])
     {
-        $returnType = '\Togglr\Client\Model\FeatureHealth';
+        $returnType = '\TogglrClient\Model\FeatureHealth';
         $request = $this->getFeatureHealthRequest($feature_key, $contentType);
 
         return $this->client
@@ -483,10 +486,10 @@ class DefaultApi
      * Report feature execution error (for auto-disable)
      *
      * @param  string $feature_key feature_key (required)
-     * @param  \Togglr\Client\Model\FeatureErrorReport $feature_error_report feature_error_report (required)
+     * @param  \TogglrClient\Model\FeatureErrorReport $feature_error_report feature_error_report (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['reportFeatureError'] to see the possible values for this operation
      *
-     * @throws \Togglr\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \TogglrClient\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
      * @return void
      */
@@ -501,10 +504,10 @@ class DefaultApi
      * Report feature execution error (for auto-disable)
      *
      * @param  string $feature_key (required)
-     * @param  \Togglr\Client\Model\FeatureErrorReport $feature_error_report (required)
+     * @param  \TogglrClient\Model\FeatureErrorReport $feature_error_report (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['reportFeatureError'] to see the possible values for this operation
      *
-     * @throws \Togglr\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \TogglrClient\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
      * @return array of null, HTTP status code, HTTP response headers (array of strings)
      */
@@ -541,7 +544,7 @@ class DefaultApi
                 case 400:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Togglr\Client\Model\ErrorBadRequest',
+                        '\TogglrClient\Model\ErrorBadRequest',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -549,7 +552,7 @@ class DefaultApi
                 case 401:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Togglr\Client\Model\ErrorUnauthorized',
+                        '\TogglrClient\Model\ErrorUnauthorized',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -557,7 +560,7 @@ class DefaultApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Togglr\Client\Model\ErrorNotFound',
+                        '\TogglrClient\Model\ErrorNotFound',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -565,7 +568,7 @@ class DefaultApi
                 case 500:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Togglr\Client\Model\ErrorInternalServerError',
+                        '\TogglrClient\Model\ErrorInternalServerError',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -573,7 +576,7 @@ class DefaultApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Togglr\Client\Model\Error',
+                        '\TogglrClient\Model\Error',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -591,7 +594,7 @@ class DefaultApi
      * Report feature execution error (for auto-disable)
      *
      * @param  string $feature_key (required)
-     * @param  \Togglr\Client\Model\FeatureErrorReport $feature_error_report (required)
+     * @param  \TogglrClient\Model\FeatureErrorReport $feature_error_report (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['reportFeatureError'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
@@ -613,7 +616,7 @@ class DefaultApi
      * Report feature execution error (for auto-disable)
      *
      * @param  string $feature_key (required)
-     * @param  \Togglr\Client\Model\FeatureErrorReport $feature_error_report (required)
+     * @param  \TogglrClient\Model\FeatureErrorReport $feature_error_report (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['reportFeatureError'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
@@ -651,7 +654,7 @@ class DefaultApi
      * Create request for operation 'reportFeatureError'
      *
      * @param  string $feature_key (required)
-     * @param  \Togglr\Client\Model\FeatureErrorReport $feature_error_report (required)
+     * @param  \TogglrClient\Model\FeatureErrorReport $feature_error_report (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['reportFeatureError'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
@@ -768,9 +771,9 @@ class DefaultApi
      * @param  array<string,mixed> $request_body request_body (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sdkV1FeaturesFeatureKeyEvaluatePost'] to see the possible values for this operation
      *
-     * @throws \Togglr\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \TogglrClient\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Togglr\Client\Model\EvaluateResponse|\Togglr\Client\Model\ErrorBadRequest|\Togglr\Client\Model\ErrorUnauthorized|\Togglr\Client\Model\ErrorNotFound|\Togglr\Client\Model\ErrorInternalServerError|\Togglr\Client\Model\Error
+     * @return \TogglrClient\Model\EvaluateResponse|\TogglrClient\Model\ErrorBadRequest|\TogglrClient\Model\ErrorUnauthorized|\TogglrClient\Model\ErrorNotFound|\TogglrClient\Model\ErrorInternalServerError|\TogglrClient\Model\Error
      */
     public function sdkV1FeaturesFeatureKeyEvaluatePost($feature_key, $request_body, string $contentType = self::contentTypes['sdkV1FeaturesFeatureKeyEvaluatePost'][0])
     {
@@ -787,9 +790,9 @@ class DefaultApi
      * @param  array<string,mixed> $request_body (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sdkV1FeaturesFeatureKeyEvaluatePost'] to see the possible values for this operation
      *
-     * @throws \Togglr\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \TogglrClient\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Togglr\Client\Model\EvaluateResponse|\Togglr\Client\Model\ErrorBadRequest|\Togglr\Client\Model\ErrorUnauthorized|\Togglr\Client\Model\ErrorNotFound|\Togglr\Client\Model\ErrorInternalServerError|\Togglr\Client\Model\Error, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \TogglrClient\Model\EvaluateResponse|\TogglrClient\Model\ErrorBadRequest|\TogglrClient\Model\ErrorUnauthorized|\TogglrClient\Model\ErrorNotFound|\TogglrClient\Model\ErrorInternalServerError|\TogglrClient\Model\Error, HTTP status code, HTTP response headers (array of strings)
      */
     public function sdkV1FeaturesFeatureKeyEvaluatePostWithHttpInfo($feature_key, $request_body, string $contentType = self::contentTypes['sdkV1FeaturesFeatureKeyEvaluatePost'][0])
     {
@@ -821,37 +824,37 @@ class DefaultApi
             switch($statusCode) {
                 case 200:
                     return $this->handleResponseWithDataType(
-                        '\Togglr\Client\Model\EvaluateResponse',
+                        '\TogglrClient\Model\EvaluateResponse',
                         $request,
                         $response,
                     );
                 case 400:
                     return $this->handleResponseWithDataType(
-                        '\Togglr\Client\Model\ErrorBadRequest',
+                        '\TogglrClient\Model\ErrorBadRequest',
                         $request,
                         $response,
                     );
                 case 401:
                     return $this->handleResponseWithDataType(
-                        '\Togglr\Client\Model\ErrorUnauthorized',
+                        '\TogglrClient\Model\ErrorUnauthorized',
                         $request,
                         $response,
                     );
                 case 404:
                     return $this->handleResponseWithDataType(
-                        '\Togglr\Client\Model\ErrorNotFound',
+                        '\TogglrClient\Model\ErrorNotFound',
                         $request,
                         $response,
                     );
                 case 500:
                     return $this->handleResponseWithDataType(
-                        '\Togglr\Client\Model\ErrorInternalServerError',
+                        '\TogglrClient\Model\ErrorInternalServerError',
                         $request,
                         $response,
                     );
                 default:
                     return $this->handleResponseWithDataType(
-                        '\Togglr\Client\Model\Error',
+                        '\TogglrClient\Model\Error',
                         $request,
                         $response,
                     );
@@ -873,7 +876,7 @@ class DefaultApi
             }
 
             return $this->handleResponseWithDataType(
-                '\Togglr\Client\Model\EvaluateResponse',
+                '\TogglrClient\Model\EvaluateResponse',
                 $request,
                 $response,
             );
@@ -882,7 +885,7 @@ class DefaultApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Togglr\Client\Model\EvaluateResponse',
+                        '\TogglrClient\Model\EvaluateResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -890,7 +893,7 @@ class DefaultApi
                 case 400:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Togglr\Client\Model\ErrorBadRequest',
+                        '\TogglrClient\Model\ErrorBadRequest',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -898,7 +901,7 @@ class DefaultApi
                 case 401:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Togglr\Client\Model\ErrorUnauthorized',
+                        '\TogglrClient\Model\ErrorUnauthorized',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -906,7 +909,7 @@ class DefaultApi
                 case 404:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Togglr\Client\Model\ErrorNotFound',
+                        '\TogglrClient\Model\ErrorNotFound',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -914,7 +917,7 @@ class DefaultApi
                 case 500:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Togglr\Client\Model\ErrorInternalServerError',
+                        '\TogglrClient\Model\ErrorInternalServerError',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -922,7 +925,7 @@ class DefaultApi
                 default:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Togglr\Client\Model\Error',
+                        '\TogglrClient\Model\Error',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -970,7 +973,7 @@ class DefaultApi
      */
     public function sdkV1FeaturesFeatureKeyEvaluatePostAsyncWithHttpInfo($feature_key, $request_body, string $contentType = self::contentTypes['sdkV1FeaturesFeatureKeyEvaluatePost'][0])
     {
-        $returnType = '\Togglr\Client\Model\EvaluateResponse';
+        $returnType = '\TogglrClient\Model\EvaluateResponse';
         $request = $this->sdkV1FeaturesFeatureKeyEvaluatePostRequest($feature_key, $request_body, $contentType);
 
         return $this->client
@@ -1128,9 +1131,9 @@ class DefaultApi
      *
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sdkV1HealthGet'] to see the possible values for this operation
      *
-     * @throws \Togglr\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \TogglrClient\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Togglr\Client\Model\HealthResponse
+     * @return \TogglrClient\Model\HealthResponse
      */
     public function sdkV1HealthGet(string $contentType = self::contentTypes['sdkV1HealthGet'][0])
     {
@@ -1145,9 +1148,9 @@ class DefaultApi
      *
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['sdkV1HealthGet'] to see the possible values for this operation
      *
-     * @throws \Togglr\Client\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \TogglrClient\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Togglr\Client\Model\HealthResponse, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \TogglrClient\Model\HealthResponse, HTTP status code, HTTP response headers (array of strings)
      */
     public function sdkV1HealthGetWithHttpInfo(string $contentType = self::contentTypes['sdkV1HealthGet'][0])
     {
@@ -1179,7 +1182,7 @@ class DefaultApi
             switch($statusCode) {
                 case 200:
                     return $this->handleResponseWithDataType(
-                        '\Togglr\Client\Model\HealthResponse',
+                        '\TogglrClient\Model\HealthResponse',
                         $request,
                         $response,
                     );
@@ -1201,7 +1204,7 @@ class DefaultApi
             }
 
             return $this->handleResponseWithDataType(
-                '\Togglr\Client\Model\HealthResponse',
+                '\TogglrClient\Model\HealthResponse',
                 $request,
                 $response,
             );
@@ -1210,7 +1213,7 @@ class DefaultApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Togglr\Client\Model\HealthResponse',
+                        '\TogglrClient\Model\HealthResponse',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1254,7 +1257,7 @@ class DefaultApi
      */
     public function sdkV1HealthGetAsyncWithHttpInfo(string $contentType = self::contentTypes['sdkV1HealthGet'][0])
     {
-        $returnType = '\Togglr\Client\Model\HealthResponse';
+        $returnType = '\TogglrClient\Model\HealthResponse';
         $request = $this->sdkV1HealthGetRequest($contentType);
 
         return $this->client
@@ -1363,6 +1366,296 @@ class DefaultApi
         $query = ObjectSerializer::buildQuery($queryParams);
         return new Request(
             'GET',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation trackFeatureEvent
+     *
+     * Track event for a feature (impression / conversion / error / custom)
+     *
+     * @param  string $feature_key feature_key (required)
+     * @param  \TogglrClient\Model\TrackRequest $track_request track_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['trackFeatureEvent'] to see the possible values for this operation
+     *
+     * @throws \TogglrClient\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return void
+     */
+    public function trackFeatureEvent($feature_key, $track_request, string $contentType = self::contentTypes['trackFeatureEvent'][0])
+    {
+        $this->trackFeatureEventWithHttpInfo($feature_key, $track_request, $contentType);
+    }
+
+    /**
+     * Operation trackFeatureEventWithHttpInfo
+     *
+     * Track event for a feature (impression / conversion / error / custom)
+     *
+     * @param  string $feature_key (required)
+     * @param  \TogglrClient\Model\TrackRequest $track_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['trackFeatureEvent'] to see the possible values for this operation
+     *
+     * @throws \TogglrClient\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of null, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function trackFeatureEventWithHttpInfo($feature_key, $track_request, string $contentType = self::contentTypes['trackFeatureEvent'][0])
+    {
+        $request = $this->trackFeatureEventRequest($feature_key, $track_request, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            return [null, $statusCode, $response->getHeaders()];
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 400:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\TogglrClient\Model\ErrorBadRequest',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                case 401:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\TogglrClient\Model\ErrorUnauthorized',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                case 404:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\TogglrClient\Model\ErrorNotFound',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                case 429:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\TogglrClient\Model\ErrorTooManyRequests',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                case 500:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\TogglrClient\Model\ErrorInternalServerError',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+                default:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\TogglrClient\Model\Error',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    throw $e;
+            }
+        
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation trackFeatureEventAsync
+     *
+     * Track event for a feature (impression / conversion / error / custom)
+     *
+     * @param  string $feature_key (required)
+     * @param  \TogglrClient\Model\TrackRequest $track_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['trackFeatureEvent'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function trackFeatureEventAsync($feature_key, $track_request, string $contentType = self::contentTypes['trackFeatureEvent'][0])
+    {
+        return $this->trackFeatureEventAsyncWithHttpInfo($feature_key, $track_request, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation trackFeatureEventAsyncWithHttpInfo
+     *
+     * Track event for a feature (impression / conversion / error / custom)
+     *
+     * @param  string $feature_key (required)
+     * @param  \TogglrClient\Model\TrackRequest $track_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['trackFeatureEvent'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function trackFeatureEventAsyncWithHttpInfo($feature_key, $track_request, string $contentType = self::contentTypes['trackFeatureEvent'][0])
+    {
+        $returnType = '';
+        $request = $this->trackFeatureEventRequest($feature_key, $track_request, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    return [null, $response->getStatusCode(), $response->getHeaders()];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'trackFeatureEvent'
+     *
+     * @param  string $feature_key (required)
+     * @param  \TogglrClient\Model\TrackRequest $track_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['trackFeatureEvent'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function trackFeatureEventRequest($feature_key, $track_request, string $contentType = self::contentTypes['trackFeatureEvent'][0])
+    {
+
+        // verify the required parameter 'feature_key' is set
+        if ($feature_key === null || (is_array($feature_key) && count($feature_key) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $feature_key when calling trackFeatureEvent'
+            );
+        }
+
+        // verify the required parameter 'track_request' is set
+        if ($track_request === null || (is_array($track_request) && count($track_request) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $track_request when calling trackFeatureEvent'
+            );
+        }
+
+
+        $resourcePath = '/sdk/v1/features/{feature_key}/track';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($feature_key !== null) {
+            $resourcePath = str_replace(
+                '{' . 'feature_key' . '}',
+                ObjectSerializer::toPathValue($feature_key),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (isset($track_request)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($track_request));
+            } else {
+                $httpBody = $track_request;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
+        if ($apiKey !== null) {
+            $headers['Authorization'] = $apiKey;
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody

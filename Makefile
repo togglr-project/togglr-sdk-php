@@ -24,11 +24,11 @@ dev-install:
 # Generate client from OpenAPI spec
 generate:
 	@echo "Generating client from OpenAPI specification..."
-	@mkdir -p internal/generated
-	openapi-generator generate \
+	@mkdir -p generated
+	openapi-generator-cli generate \
 		-i specs/sdk.yml \
 		-g php \
-		-o internal/generated \
+		-o generated \
 		--package-name togglr-client \
 		--additional-properties=packageName=togglr-client,projectName=togglr-sdk-php,packageVersion=1.0.0
 
@@ -51,7 +51,6 @@ format:
 
 # Clean generated files
 clean:
-	rm -rf internal/generated/*
 	rm -rf vendor/
 	rm -rf coverage/
 	find . -type d -name ".phpunit.result.cache" -exec rm -rf {} + 2>/dev/null || true

@@ -6,6 +6,7 @@ use Togglr\Sdk\Exception\FeatureNotFoundException;
 use Togglr\Sdk\Exception\TogglrException;
 use Togglr\Sdk\Models\ErrorReport;
 use Togglr\Sdk\Models\FeatureHealth;
+use Togglr\Sdk\Models\TrackEvent;
 use Togglr\Sdk\RequestContext;
 use Togglr\Sdk\TogglrSdk;
 
@@ -18,7 +19,7 @@ function main(): void
 
     // Create client with advanced configuration
     $client = TogglrSdk::newClient(
-        'your-api-key-here',
+        '42b6f8f1-630c-400c-97bd-a3454a07f700',
         [
             'base_url' => 'http://localhost:8090',
             'timeout' => 2.0,
@@ -153,6 +154,109 @@ function main(): void
         $health = FeatureHealth::fromArray($healthData);
         echo "Feature Health: " . json_encode($health->toArray()) . "\n";
         echo "Is Healthy: " . ($health->isHealthy() ? 'true' : 'false') . "\n";
+
+        // Event tracking examples
+        echo "\n=== Event Tracking Examples ===\n";
+        
+        // Track impression event
+        $impressionEvent = TrackEvent::new('A', TrackEvent::EVENT_TYPE_SUCCESS)
+            ->withContext('user.id', 'user456')
+            ->withContext('country', 'CA')
+            ->withContext('device_type', 'desktop')
+            ->withContext('subscription', 'premium')
+            ->withDedupKey('impression-user456-advanced_analytics');
+
+        try {
+            $client->trackEvent($featureKey, $impressionEvent);
+            echo "Impression event tracked successfully\n";
+        } catch (TogglrException $e) {
+            echo "Error tracking impression event: {$e->getMessage()}\n";
+        }
+
+        // Track conversion event with high reward
+        $conversionEvent = TrackEvent::new('A', TrackEvent::EVENT_TYPE_SUCCESS)
+            ->withReward(5.0)
+            ->withContext('user.id', 'user456')
+            ->withContext('conversion_type', 'subscription_upgrade')
+            ->withContext('plan_value', 299.99)
+            ->withContext('currency', 'CAD')
+            ->withDedupKey('conversion-user456-advanced_analytics');
+
+        try {
+            $client->trackEvent($featureKey, $conversionEvent);
+            echo "Conversion event tracked successfully\n";
+        } catch (TogglrException $e) {
+            echo "Error tracking conversion event: {$e->getMessage()}\n";
+        }
+
+        // Track failure event
+        $failureEvent = TrackEvent::new('B', TrackEvent::EVENT_TYPE_FAILURE)
+            ->withContext('user.id', 'user456')
+            ->withContext('failure_reason', 'validation_error')
+            ->withContext('error_code', 'INVALID_DATA')
+            ->withDedupKey('failure-user456-advanced_analytics');
+
+        try {
+            $client->trackEvent($featureKey, $failureEvent);
+            echo "Failure event tracked successfully\n";
+        } catch (TogglrException $e) {
+            echo "Error tracking failure event: {$e->getMessage()}\n";
+        }
+
+        // Track error event with detailed context
+        $errorEvent = TrackEvent::new('B', TrackEvent::EVENT_TYPE_ERROR)
+            ->withContext('user.id', 'user456')
+            ->withContext('error_type', 'service_timeout')
+            ->withContext('error_message', 'Analytics service did not respond in 10s')
+            ->withContext('service', 'analytics-api')
+            ->withContext('timeout_ms', 10000)
+            ->withContext('retry_count', 3)
+            ->withDedupKey('error-user456-advanced_analytics');
+
+        try {
+            $client->trackEvent($featureKey, $errorEvent);
+            echo "Error event tracked successfully\n";
+        } catch (TogglrException $e) {
+            echo "Error tracking error event: {$e->getMessage()}\n";
+        }
+
+        // Batch tracking simulation
+        echo "\n=== Batch Event Tracking Simulation ===\n";
+        $batchEvents = [
+            ['A', TrackEvent::EVENT_TYPE_SUCCESS, 1.0, 'impression'],
+            ['A', TrackEvent::EVENT_TYPE_SUCCESS, 2.0, 'click'],
+            ['A', TrackEvent::EVENT_TYPE_SUCCESS, 5.0, 'conversion'],
+            ['B', TrackEvent::EVENT_TYPE_FAILURE, 0.0, 'validation_error'],
+            ['B', TrackEvent::EVENT_TYPE_ERROR, 0.0, 'timeout'],
+        ];
+
+        foreach ($batchEvents as [$variant, $eventType, $reward, $action]) {
+            $event = TrackEvent::new($variant, $eventType)
+                ->withReward($reward)
+                ->withContext('user.id', 'user456')
+                ->withContext('action', $action)
+                ->withContext('batch_id', 'batch_001')
+                ->withDedupKey("batch-{$action}-user456-advanced_analytics");
+
+            try {
+                $client->trackEvent($featureKey, $event);
+                echo "Batch event '{$action}' tracked successfully\n";
+            } catch (TogglrException $e) {
+                echo "Error tracking batch event '{$action}': {$e->getMessage()}\n";
+            }
+        }
+
+        // Demonstrate TrackEvent model
+        echo "\n=== TrackEvent Model Example ===\n";
+        $trackEvent = TrackEvent::new('C', TrackEvent::EVENT_TYPE_SUCCESS)
+            ->withReward(3.5)
+            ->withContext('user.id', 'user789')
+            ->withContext('experiment', 'new_algorithm')
+            ->withContext('variant', 'C')
+            ->withCreatedAt(new DateTime())
+            ->withDedupKey('demo-event-user789');
+
+        echo "Track Event: " . json_encode($trackEvent->toApiRequest()) . "\n";
 
     } finally {
         $client->close();

@@ -1,5 +1,4 @@
 .gitignore
-.openapi-generator-ignore
 .php-cs-fixer.dist.php
 .travis.yml
 README.md
@@ -17,6 +16,7 @@ docs/Model/EvaluateResponse.md
 docs/Model/FeatureErrorReport.md
 docs/Model/FeatureHealth.md
 docs/Model/HealthResponse.md
+docs/Model/TrackRequest.md
 git_push.sh
 lib/Api/DefaultApi.php
 lib/ApiException.php
@@ -36,18 +36,6 @@ lib/Model/FeatureErrorReport.php
 lib/Model/FeatureHealth.php
 lib/Model/HealthResponse.php
 lib/Model/ModelInterface.php
+lib/Model/TrackRequest.php
 lib/ObjectSerializer.php
 phpunit.xml.dist
-test/Api/DefaultApiTest.php
-test/Model/ErrorBadRequestTest.php
-test/Model/ErrorErrorTest.php
-test/Model/ErrorInternalServerErrorTest.php
-test/Model/ErrorNotFoundTest.php
-test/Model/ErrorPermissionDeniedTest.php
-test/Model/ErrorTest.php
-test/Model/ErrorTooManyRequestsTest.php
-test/Model/ErrorUnauthorizedTest.php
-test/Model/EvaluateResponseTest.php
-test/Model/FeatureErrorReportTest.php
-test/Model/FeatureHealthTest.php
-test/Model/HealthResponseTest.php

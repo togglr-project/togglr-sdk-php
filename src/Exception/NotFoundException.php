@@ -9,7 +9,7 @@ namespace Togglr\Sdk\Exception;
  */
 class NotFoundException extends TogglrException
 {
-    public function __construct(string $message = 'Resource not found', \Throwable $previous = null)
+    public function __construct(string $message = 'Resource not found', ?\Throwable $previous = null)
     {
         parent::__construct($message, 404, $previous);
     }

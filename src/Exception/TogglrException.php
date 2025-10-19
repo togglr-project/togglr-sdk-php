@@ -11,7 +11,7 @@ class TogglrException extends \Exception
 {
     private ?int $statusCode;
 
-    public function __construct(string $message = '', ?int $statusCode = null, \Throwable $previous = null)
+    public function __construct(string $message = '', ?int $statusCode = null, ?\Throwable $previous = null)
     {
         parent::__construct($message, 0, $previous);
         $this->statusCode = $statusCode;

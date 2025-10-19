@@ -17,6 +17,7 @@ require_once 'vendor/autoload.php';
 
 use Togglr\Sdk\TogglrSdk;
 use Togglr\Sdk\RequestContext;
+use Togglr\Sdk\Models\TrackEvent;
 
 // Create client with default configuration
 $client = TogglrSdk::newClient(
@@ -143,6 +144,79 @@ $isEnabled = $client->isEnabled('feature_key', $context);
 
 // With default value
 $isEnabled = $client->isEnabledOrDefault('feature_key', $context, false);
+```
+
+## Event Tracking
+
+The SDK supports tracking events for analytics and A/B testing. This is essential for measuring feature impact and training machine learning algorithms.
+
+### Basic Event Tracking
+
+```php
+// Track impression event (recommended for each evaluation)
+$impressionEvent = TrackEvent::new('A', TrackEvent::EVENT_TYPE_SUCCESS)
+    ->withContext('user.id', 'user123')
+    ->withContext('country', 'US')
+    ->withContext('device_type', 'mobile')
+    ->withDedupKey('impression-user123-feature_key');
+
+$client->trackEvent('feature_key', $impressionEvent);
+```
+
+### Conversion Tracking
+
+```php
+// Track conversion with reward
+$conversionEvent = TrackEvent::new('A', TrackEvent::EVENT_TYPE_SUCCESS)
+    ->withReward(1.0)
+    ->withContext('user.id', 'user123')
+    ->withContext('conversion_type', 'purchase')
+    ->withContext('order_value', 99.99)
+    ->withDedupKey('conversion-user123-feature_key');
+
+$client->trackEvent('feature_key', $conversionEvent);
+```
+
+### Error and Failure Tracking
+
+```php
+// Track failure event
+$failureEvent = TrackEvent::new('B', TrackEvent::EVENT_TYPE_FAILURE)
+    ->withContext('user.id', 'user123')
+    ->withContext('failure_reason', 'validation_error')
+    ->withDedupKey('failure-user123-feature_key');
+
+$client->trackEvent('feature_key', $failureEvent);
+
+// Track error event
+$errorEvent = TrackEvent::new('B', TrackEvent::EVENT_TYPE_ERROR)
+    ->withContext('user.id', 'user123')
+    ->withContext('error_type', 'timeout')
+    ->withContext('error_message', 'Service did not respond in 5s')
+    ->withDedupKey('error-user123-feature_key');
+
+$client->trackEvent('feature_key', $errorEvent);
+```
+
+### Event Types
+
+- `TrackEvent::EVENT_TYPE_SUCCESS` - Successful events (conversions, impressions)
+- `TrackEvent::EVENT_TYPE_FAILURE` - Failed events (validation errors, business logic failures)
+- `TrackEvent::EVENT_TYPE_ERROR` - Technical errors (timeouts, exceptions)
+
+### Event Context
+
+Events support arbitrary context data for detailed analytics:
+
+```php
+$event = TrackEvent::new('A', TrackEvent::EVENT_TYPE_SUCCESS)
+    ->withContext('user.id', 'user123')
+    ->withContext('session.id', 'sess_456')
+    ->withContext('experiment', 'new_algorithm')
+    ->withContext('custom_metric', 42.5)
+    ->withReward(2.0)
+    ->withCreatedAt(new DateTime())
+    ->withDedupKey('unique-event-id');
 ```
 
 ## Error Reporting and Auto-Disable

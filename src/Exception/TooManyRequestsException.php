@@ -9,7 +9,7 @@ namespace Togglr\Sdk\Exception;
  */
 class TooManyRequestsException extends TogglrException
 {
-    public function __construct(string $message = 'Too many requests', \Throwable $previous = null)
+    public function __construct(string $message = 'Too many requests', ?\Throwable $previous = null)
     {
         parent::__construct($message, 429, $previous);
     }

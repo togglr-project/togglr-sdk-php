@@ -5,7 +5,7 @@
  * PHP version 8.1
  *
  * @category Class
- * @package  Togglr\Client\Model
+ * @package  TogglrClient\Model
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */
@@ -26,12 +26,12 @@
  * Do not edit the class manually.
  */
 
-namespace Togglr\Client\Model;
+namespace TogglrClient\Model;
 
 /**
  * Interface abstracting model access.
  *
- * @package Togglr\Client\Model
+ * @package TogglrClient\Model
  * @author  OpenAPI Generator team
  */
 interface ModelInterface

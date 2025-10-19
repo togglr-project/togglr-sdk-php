@@ -9,7 +9,7 @@ namespace Togglr\Sdk\Exception;
  */
 class FeatureNotFoundException extends TogglrException
 {
-    public function __construct(string $message = 'Feature not found', \Throwable $previous = null)
+    public function __construct(string $message = 'Feature not found', ?\Throwable $previous = null)
     {
         parent::__construct($message, 404, $previous);
     }

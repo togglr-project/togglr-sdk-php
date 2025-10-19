@@ -9,7 +9,7 @@ namespace Togglr\Sdk\Exception;
  */
 class UnauthorizedException extends TogglrException
 {
-    public function __construct(string $message = 'Authentication required', \Throwable $previous = null)
+    public function __construct(string $message = 'Authentication required', ?\Throwable $previous = null)
     {
         parent::__construct($message, 401, $previous);
     }
