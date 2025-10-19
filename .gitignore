@@ -1,20 +1,23 @@
-# Composer
+# Dependencies
 /vendor/
 composer.lock
 
-# IDE
+# Generated code (now moved to src/Generated)
+/generated/
+
+# IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
 
-# Test results
+# Test coverage
 /coverage/
-.phpunit.result.cache
+/phpunit.xml
 
 # Build artifacts
 /build/
@@ -22,9 +25,6 @@ Thumbs.db
 
 # Logs
 *.log
-
-# Cache
-.cache/
 
 # Temporary files
 *.tmp

@@ -21,16 +21,17 @@ install:
 dev-install:
 	composer install
 
-# Generate client from OpenAPI spec
+# Generate client from OpenAPI spec (for development only)
 generate:
 	@echo "Generating client from OpenAPI specification..."
+	@echo "Note: Generated code is now included in src/Generated/"
+	@echo "This target is kept for development purposes only."
 	@mkdir -p generated
-	openapi-generator-cli generate \
+	java -jar openapi-generator-cli.jar generate \
 		-i specs/sdk.yml \
 		-g php \
 		-o generated \
-		--package-name togglr-client \
-		--additional-properties=packageName=togglr-client,projectName=togglr-sdk-php,packageVersion=1.0.0
+		--additional-properties=packageName=Togglr\\Sdk\\Generated,invokerPackage=Togglr\\Sdk\\Generated,srcBasePath=lib,composerVendorName=togglr,composerPackageName=togglr/sdk-php
 
 # Build package
 build:

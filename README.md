@@ -8,6 +8,17 @@ PHP SDK for working with Togglr - feature flag management system.
 composer require togglr/sdk-php
 ```
 
+## Package Structure
+
+The SDK is self-contained and includes all necessary generated code:
+
+- `src/` - Main SDK source code
+- `src/Generated/` - Generated API client code (included in package)
+- `examples/` - Usage examples
+- `specs/` - OpenAPI specification
+
+No external generation step is required for end users.
+
 ## Quick Start
 
 ```php

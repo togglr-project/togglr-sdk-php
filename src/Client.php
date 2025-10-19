@@ -17,11 +17,11 @@ use Togglr\Sdk\Exception\TooManyRequestsException;
 use Togglr\Sdk\Exception\UnauthorizedException;
 
 // Generated API client
-use TogglrClient\Api\DefaultApi;
-use TogglrClient\Configuration as ApiConfiguration;
-use TogglrClient\Model\FeatureErrorReport;
-use TogglrClient\Model\FeatureHealth as ApiFeatureHealth;
-use TogglrClient\Model\TrackRequest as ApiTrackRequest;
+use Togglr\Sdk\Generated\Api\DefaultApi;
+use Togglr\Sdk\Generated\Configuration as ApiConfiguration;
+use Togglr\Sdk\Generated\Model\FeatureErrorReport;
+use Togglr\Sdk\Generated\Model\FeatureHealth as ApiFeatureHealth;
+use Togglr\Sdk\Generated\Model\TrackRequest as ApiTrackRequest;
 
 /**
  * Togglr SDK client for feature flag evaluation.
@@ -214,7 +214,7 @@ class Client
             }
 
             return ['value' => '', 'enabled' => false, 'found' => false];
-        } catch (\TogglrClient\ApiException $e) {
+        } catch (\Togglr\Sdk\Generated\ApiException $e) {
             $this->handleApiException($e, $featureKey);
         }
     }
@@ -320,7 +320,7 @@ class Client
 
             $this->apiClient->reportFeatureError($featureKey, $apiErrorReport);
             // Success - error queued for processing
-        } catch (\TogglrClient\ApiException $e) {
+        } catch (\Togglr\Sdk\Generated\ApiException $e) {
             $this->handleApiException($e, $featureKey);
         }
     }
@@ -363,7 +363,7 @@ class Client
         try {
             $apiHealth = $this->apiClient->getFeatureHealth($featureKey);
             return $this->convertFeatureHealth($apiHealth);
-        } catch (\TogglrClient\ApiException $e) {
+        } catch (\Togglr\Sdk\Generated\ApiException $e) {
             $this->handleApiException($e, $featureKey);
         }
     }
@@ -414,7 +414,7 @@ class Client
      *
      * @throws TogglrException
      */
-    private function handleApiException(\TogglrClient\ApiException $e, string $featureKey): void
+    private function handleApiException(\Togglr\Sdk\Generated\ApiException $e, string $featureKey): void
     {
         $statusCode = $e->getCode();
         
@@ -505,7 +505,7 @@ class Client
 
             $this->apiClient->trackFeatureEvent($featureKey, $apiTrackRequest);
             // Success - event queued for processing
-        } catch (\TogglrClient\ApiException $e) {
+        } catch (\Togglr\Sdk\Generated\ApiException $e) {
             $this->handleApiException($e, $featureKey);
         }
     }
